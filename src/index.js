@@ -36,8 +36,14 @@ refInputCountry.addEventListener('input', debounce(onInput, DEBOUNCE_DELAY));
 
 
 function onInput(event) {
+const querryValue = event.target.value.trim();
+console.log(querryValue);
+if (querryValue.length === 0) {
+    console.log('empty String - no fetch');
+    return
+}
 //    const test = fetchCountries(event).then(onSuccess).catch(error => console.log(error));
-const test = fetchCountries(event).then(onSuccess).catch(onError);
+const test = fetchCountries(querryValue).then(onSuccess).catch(onError);
 //    const test2 = Object.keys(countriesList).length;
 //    console.log(test);
 }
