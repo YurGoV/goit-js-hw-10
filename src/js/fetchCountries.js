@@ -5,15 +5,11 @@ export function fetchCountries(name) {
   .then(response => 
     {
     
-    // if (!response.ok) {
-    //   throw new Error(response.status);
-    // }
+    if (!response.ok) {
+      throw new Error(response.status);
+    }
   
     return response.json()
-}
-);
-
-    console.log(name.target.value.trim());
-
+});
 }
 

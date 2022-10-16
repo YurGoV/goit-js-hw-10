@@ -4,6 +4,20 @@ import {fetchCountries} from './js/fetchCountries';
 // import { useDebounce } from 'use-lodash-debounce';
 import debounce from 'lodash.debounce';
 
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
+Notify.init({
+    width: '350px',
+    position: 'center-top',
+    distance: '10px',
+    opacity: 0.7,
+    clickToClose: true,
+    fontSize: '28px',
+  });
+
+Notify.success('Sol lucet omnibus');
+Notify.failure('Qui timide rogat docet negare');
+
+
 const DEBOUNCE_DELAY = 1000;
 
 const refInputCountry = document.querySelector('input#search-box');
@@ -22,7 +36,8 @@ refInputCountry.addEventListener('input', debounce(onInput, DEBOUNCE_DELAY));
 
 
 function onInput(event) {
-   const test = fetchCountries(event).then(onSuccess, onError);
+//    const test = fetchCountries(event).then(onSuccess).catch(error => console.log(error));
+const test = fetchCountries(event).then(onSuccess).catch(onError);
 //    const test2 = Object.keys(countriesList).length;
 //    console.log(test);
 }
@@ -43,8 +58,10 @@ function onSuccess(value) {
         
     }
     if (value.length > 10 ) {
+        console.log(value);
 
-        console.log('more than 10 items!!!\n "Too many matches found. Please enter a more specific name."');;
+        // console.log('more than 10 items!!!\n "Too many matches found. Please enter a more specific name."');
+        Notify.success('Too many matches found. Please enter a more specific name.');
         countriesList.innerHTML='';
         countryInfo.innerHTML='';
         console.log('innerHTML init');
@@ -69,7 +86,8 @@ function onSuccess(value) {
 
 function onError(value) {
     console.log('oner');
-    console.log(value);
+    // console.log(value);
+    Notify.failure(`Oops, there is no country with that name ${value}`);
     // console.log(value.length);
 }
 
