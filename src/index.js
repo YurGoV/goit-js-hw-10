@@ -14,8 +14,8 @@ Notify.init({
     fontSize: '28px',
   });
 
-Notify.success('Sol lucet omnibus');
-Notify.failure('Qui timide rogat docet negare');
+// Notify.success('Sol lucet omnibus');
+// Notify.failure('Qui timide rogat docet negare');
 
 
 const DEBOUNCE_DELAY = 1000;
