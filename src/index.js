@@ -46,6 +46,7 @@ function onSuccess(value) {
 
         console.log('more than 10 items!!!\n "Too many matches found. Please enter a more specific name."');;
         countriesList.innerHTML='';
+        countryInfo.innerHTML='';
         console.log('innerHTML init');
         // console.log(test2);
         // if (listIsEmpty) {
