@@ -18,3 +18,42 @@ body {
   max-width: 320px;
   margin-bottom: 16px;
 }
+
+
+ul.country-list,
+div.country-info {
+  display: flex;
+  flex-direction: column;
+  list-style-type: none;
+}
+
+div.country-info ul{
+  list-style-type: none;
+  padding-left: 40px;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+ul.country-list .list-item {
+  display: flex;
+  flex-direction: row;
+}
+
+div.country_title {
+  display: flex;
+  flex-direction: row;
+  padding-left: 40px;
+}
+
+.country-list img,
+.country-info img {
+  width: 60px;
+  margin-right: 20px;
+  object-fit: contain;
+}
+
+/* .country_name::before {
+
+  content: url("https://flagcdn.com/kp.svg");
+  width: 60px;
+} */

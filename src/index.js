@@ -8,6 +8,12 @@ const DEBOUNCE_DELAY = 1000;
 
 const refInputCountry = document.querySelector('input#search-box');
 
+const countriesList = document.querySelector('ul.country-list');
+console.log(countriesList);
+
+const countryInfo = document.querySelector('div.country-info');
+console.log(countryInfo);
+
 
 console.log(refInputCountry);
 
@@ -17,35 +23,106 @@ refInputCountry.addEventListener('input', debounce(onInput, DEBOUNCE_DELAY));
 
 function onInput(event) {
    const test = fetchCountries(event).then(onSuccess, onError);
+//    const test2 = Object.keys(countriesList).length;
 //    console.log(test);
 }
 
 function onSuccess(value) {
+    // console.log(`value is ${value}`);
     if (value.length === 1) {
-        const {name, capital, population, flags, languages} = value[0];
-        console.log(name, capital, population, flags.svg, languages);
+        const {flags: {svg}} = value[0];
+        // console.log(name, capital, population, svg, languages);
+        value = {...value[0], flags: svg};
+        displayCountryData(value);
         return;
     }
 
     if (value.length >= 2 && value.length <= 10 ) {
-        value.map((element) =>{
-        console.log(element.flags.svg, element.name);
+
+        return displayCountriesList(value);
         
-    })
-    if (value.length === 1 && value[0] === '') {
+    }
+    if (value.length > 10 ) {
+
+        console.log('more than 10 items!!!\n "Too many matches found. Please enter a more specific name."');;
+        countriesList.innerHTML='';
+        console.log('innerHTML init');
+        // console.log(test2);
+        // if (listIsEmpty) {
+        // console.log('innerHTML init');
+        // console.log(listIsEmpty);
+        // countriesList.innerHTML='';
+        // }
+        return;
+    }
+
+    if (value[0] === '') {
         console.log(0);
         return;
     }
-    return;
-    }
 
-    console.log('more than 10 items!!!');
     console.log(value);
+    return;
+
 }
 
 function onError(value) {
     console.log('oner');
     console.log(value);
-    console.log(value.length);
+    // console.log(value.length);
 }
 
+function displayCountriesList(listArray) {
+    console.log(listArray);
+    const markup = listArray.map( element => 
+        `<li class=list-item>
+            <img src=${element.flags.svg}
+            alt='Country flag picture'>
+            <p class='country_name'>${element.name}</p>
+        </li>`)
+        .join("");
+
+    console.log(markup);
+    countriesList.innerHTML=markup;
+    countryInfo.innerHTML='';
+    // listIsEmpty = false;
+    
+};
+
+function displayCountryData(countryData) {
+    console.log(countryData);
+
+    const languages = countryData.languages.map(element => 
+        `${element.name}`
+    )
+    .join(", ");
+
+    console.log(languages);
+
+    const markup = 
+    `
+    <div class='country_title'>
+    
+    <img src=${countryData.flags}
+    alt='Country flag picture'>
+    
+       <p class='country_name'>${countryData.name}</p>
+    </div>
+
+    <ul>
+    <li class=list-item>
+    <p class='country_name'>Capital: ${countryData.capital}</p>
+    </li>
+    <li class=list-item>
+    <p class='country_name'>Population: ${countryData.population}</p>
+    </li>
+    <li class=list-item>
+    <p class='country_name'>languages: ${languages}</p>
+    </li>
+    </ul>`
+
+    console.log(markup);
+    countryInfo.innerHTML=markup;
+    countriesList.innerHTML='';
+
+}
