@@ -14,11 +14,7 @@ Notify.init({
     fontSize: '28px',
   });
 
-// Notify.success('Sol lucet omnibus');
-// Notify.failure('Qui timide rogat docet negare');
-
-
-const DEBOUNCE_DELAY = 1000;
+const DEBOUNCE_DELAY = 300;
 
 const refInputCountry = document.querySelector('input#search-box');
 
@@ -33,8 +29,6 @@ console.log(refInputCountry);
 
 refInputCountry.addEventListener('input', debounce(onInput, DEBOUNCE_DELAY));
 
-
-
 function onInput(event) {
 const querryValue = event.target.value.trim();
 console.log(querryValue);
@@ -42,14 +36,16 @@ if (querryValue.length === 0) {
     console.log('empty String - no fetch');
     return
 }
+
 //    const test = fetchCountries(event).then(onSuccess).catch(error => console.log(error));
 const test = fetchCountries(querryValue).then(onSuccess).catch(onError);
-//    const test2 = Object.keys(countriesList).length;
-//    console.log(test);
+
+//     Object.keys(countriesList).length;
+
 }
 
 function onSuccess(value) {
-    // console.log(`value is ${value}`);
+
     if (value.length === 1) {
         const {flags: {svg}} = value[0];
         // console.log(name, capital, population, svg, languages);
@@ -71,12 +67,7 @@ function onSuccess(value) {
         countriesList.innerHTML='';
         countryInfo.innerHTML='';
         console.log('innerHTML init');
-        // console.log(test2);
-        // if (listIsEmpty) {
-        // console.log('innerHTML init');
-        // console.log(listIsEmpty);
-        // countriesList.innerHTML='';
-        // }
+
         return;
     }
 
@@ -98,6 +89,8 @@ function onError(value) {
 }
 
 function displayCountriesList(listArray) {
+    // const ttt = Object.keys(countriesList).length
+    // console.log(ttt);
     console.log(listArray);
     const markup = listArray.map( element => 
         `<li class=list-item>
@@ -115,6 +108,8 @@ function displayCountriesList(listArray) {
 };
 
 function displayCountryData(countryData) {
+    // const ttt = Object.keys(countriesList).length
+    // console.log(ttt);
     console.log(countryData);
 
     const languages = countryData.languages.map(element => 
@@ -144,10 +139,12 @@ function displayCountryData(countryData) {
     <li class=list-item>
     <p class='country_name'>languages: ${languages}</p>
     </li>
-    </ul>`
-
+    </ul>
+    `
     console.log(markup);
-    countryInfo.innerHTML=markup;
+    // console.log(Object.keys(countriesList));
     countriesList.innerHTML='';
+    countryInfo.innerHTML=markup;
+
 
 }
