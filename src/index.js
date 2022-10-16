@@ -34,6 +34,8 @@ const querryValue = event.target.value.trim();
 console.log(querryValue);
 if (querryValue.length === 0) {
     console.log('empty String - no fetch');
+    countriesList.innerHTML='';
+    countryInfo.innerHTML='';
     return
 }
 
