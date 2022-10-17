@@ -28,8 +28,10 @@ const countrySearcher = {
         const querryValue = event.target.value.trim();
         if (querryValue.length === 0) {
             // console.log('empty String - no fetch');
-            refCountriesList.innerHTML='';
-            refCountryInfo.innerHTML='';
+            displayCountries({
+                counryInfo: '',
+                countriesList: '',
+            })
             return
         }
 
@@ -66,7 +68,10 @@ refInputCountry.addEventListener('input', debounce(countrySearcher.onInput, DEBO
 
 function onLongListFound() {
     Notify.success('Too many matches found. Please enter a more specific name.');
-    displayCountries('', '')
+    displayCountries({
+        counryInfo: '',
+        countriesList: '',
+    })
 }
 
 function onShortListFound(listArray) {
@@ -79,7 +84,10 @@ function onShortListFound(listArray) {
         </li>`)
         .join("");
 
-    displayCountries('', markup);
+    displayCountries({
+        counryInfo: '',
+        countriesList: markup,
+    })
 };
 
 function onOneCountryFound(countryData) {
@@ -109,18 +117,23 @@ function onOneCountryFound(countryData) {
         </li>
     </ul>`;
 
-    displayCountries(markup, '')
+    displayCountries({
+        counryInfo: markup,
+        countriesList: '',
+    })
 };
 
 function onNotFound(value) {
-    // console.log(value);
     Notify.failure(`Oops, there is no country with that name`);
-    displayCountries('', '');
+    displayCountries({
+        counryInfo: '',
+        countriesList: '',
+    })
 };
 
-function displayCountries(county, list) {
-    refCountriesList.innerHTML=list;
-    refCountryInfo.innerHTML=county;
+function displayCountries({counryInfo, countriesList}) {
+    refCountriesList.innerHTML=countriesList;
+    refCountryInfo.innerHTML=counryInfo;
 }
 
 function notifySetup() {
