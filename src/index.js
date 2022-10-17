@@ -1,99 +1,77 @@
 import './css/styles.css';
 
 import {fetchCountries} from './js/fetchCountries';
-// import { useDebounce } from 'use-lodash-debounce';
 import debounce from 'lodash.debounce';
-
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
-Notify.init({
-    width: '350px',
-    position: 'center-top',
-    distance: '10px',
-    opacity: 0.7,
-    clickToClose: true,
-    fontSize: '28px',
-  });
 
 const DEBOUNCE_DELAY = 300;
 
+
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
+Notify.init({
+    width: notifySetup().width,
+    position: notifySetup().position,
+    distance: '10px',
+    opacity: 0.7,
+    clickToClose: true,
+    fontSize: notifySetup().fontSize,
+  });
+
+
 const refInputCountry = document.querySelector('input#search-box');
+const refCountriesList = document.querySelector('ul.country-list');
+const refCountryInfo = document.querySelector('div.country-info');
 
-const countriesList = document.querySelector('ul.country-list');
-console.log(countriesList);
+const countrySearcher = {
 
-const countryInfo = document.querySelector('div.country-info');
-console.log(countryInfo);
+    onInput(event) {
+    const {onSuccess, onError} = countrySearcher;
 
+        const querryValue = event.target.value.trim();
+        if (querryValue.length === 0) {
+            // console.log('empty String - no fetch');
+            refCountriesList.innerHTML='';
+            refCountryInfo.innerHTML='';
+            return
+        }
 
-console.log(refInputCountry);
+        fetchCountries(querryValue).then(onSuccess).catch(onError);
+    },
 
-refInputCountry.addEventListener('input', debounce(onInput, DEBOUNCE_DELAY));
+    onSuccess(value) {
 
-function onInput(event) {
-const querryValue = event.target.value.trim();
-console.log(querryValue);
-if (querryValue.length === 0) {
-    console.log('empty String - no fetch');
-    countriesList.innerHTML='';
-    countryInfo.innerHTML='';
-    return
-}
+        if (value.length === 1) {
+            const {flags: {svg}} = value[0];
+            value = {...value[0], flags: svg};
+            onOneCountryFound(value);
+            return;
+        }
+    
+        if (value.length >= 2 && value.length <= 10 ) {
+    
+            return onShortListFound(value);
+            
+        }
+        if (value.length > 10 ) {
+            return onLongListFound();
+        }
+    },
 
-//    const test = fetchCountries(event).then(onSuccess).catch(error => console.log(error));
-const test = fetchCountries(querryValue).then(onSuccess).catch(onError);
-
-//     Object.keys(countriesList).length;
-
-}
-
-function onSuccess(value) {
-
-    if (value.length === 1) {
-        const {flags: {svg}} = value[0];
-        // console.log(name, capital, population, svg, languages);
-        value = {...value[0], flags: svg};
-        displayCountryData(value);
-        return;
+    onError(value) {
+        return onNotFound(value);
     }
-
-    if (value.length >= 2 && value.length <= 10 ) {
-
-        return displayCountriesList(value);
-        
-    }
-    if (value.length > 10 ) {
-        console.log(value);
-
-        // console.log('more than 10 items!!!\n "Too many matches found. Please enter a more specific name."');
-        Notify.success('Too many matches found. Please enter a more specific name.');
-        countriesList.innerHTML='';
-        countryInfo.innerHTML='';
-        console.log('innerHTML init');
-
-        return;
-    }
-
-    if (value[0] === '') {
-        console.log(0);
-        return;
-    }
-
-    console.log(value);
-    return;
 
 }
 
-function onError(value) {
-    console.log('oner');
-    // console.log(value);
-    Notify.failure(`Oops, there is no country with that name ${value}`);
-    // console.log(value.length);
+
+refInputCountry.addEventListener('input', debounce(countrySearcher.onInput, DEBOUNCE_DELAY));
+
+function onLongListFound() {
+    Notify.success('Too many matches found. Please enter a more specific name.');
+    displayCountries('', '')
 }
 
-function displayCountriesList(listArray) {
-    // const ttt = Object.keys(countriesList).length
-    // console.log(ttt);
-    console.log(listArray);
+function onShortListFound(listArray) {
+
     const markup = listArray.map( element => 
         `<li class=list-item>
             <img src=${element.flags.svg}
@@ -102,29 +80,18 @@ function displayCountriesList(listArray) {
         </li>`)
         .join("");
 
-    console.log(markup);
-    countriesList.innerHTML=markup;
-    countryInfo.innerHTML='';
-    // listIsEmpty = false;
-    
+    displayCountries('', markup);
 };
 
-function displayCountryData(countryData) {
-    // const ttt = Object.keys(countriesList).length
-    // console.log(ttt);
-    console.log(countryData);
+function onOneCountryFound(countryData) {
 
     const languages = countryData.languages.map(element => 
         `${element.name}`
-    )
-    .join(", ");
+        )
+        .join(", ");
 
-    console.log(languages);
-
-    const markup = 
-    `
-    <div class='country_title'>
-    
+    const markup = `
+    <div class='country-title'>    
     <img src=${countryData.flags}
     alt='Country flag picture'>
     
@@ -132,21 +99,42 @@ function displayCountryData(countryData) {
     </div>
 
     <ul>
-    <li class=list-item>
-    <p class='country_name'>Capital: ${countryData.capital}</p>
-    </li>
-    <li class=list-item>
-    <p class='country_name'>Population: ${countryData.population}</p>
-    </li>
-    <li class=list-item>
-    <p class='country_name'>languages: ${languages}</p>
-    </li>
-    </ul>
-    `
-    console.log(markup);
-    // console.log(Object.keys(countriesList));
-    countriesList.innerHTML='';
-    countryInfo.innerHTML=markup;
+        <li class=list-item>
+            <p class='country_name'><span style="font-weight:bold">Capital: </span>${countryData.capital}</p>
+            </li>
+            <li class=list-item>
+            <p class='country_name'><span style="font-weight:bold">Population: </span>${countryData.population}</p>
+            </li>
+            <li class=list-item>
+            <p class='country_name'><span style="font-weight:bold">languages: </span>${languages}</p>
+        </li>
+    </ul>`;
 
+    displayCountries(markup, '')
+};
 
+function onNotFound(value) {
+    // console.log(value);
+    Notify.failure(`Oops, there is no country with that name`);
+    displayCountries('', '');
+};
+
+function displayCountries(county, list) {
+    refCountriesList.innerHTML=list;
+    refCountryInfo.innerHTML=county;
 }
+
+function notifySetup() {
+    if (window.innerWidth >= 1100) {
+        return {
+        position: 'center-top',
+        fontSize: '18px',
+        width: '400px',
+        }
+    };
+    return {
+    fontSize: '14px',
+    position: 'right-top',
+    width: '280px',
+    };
+};
